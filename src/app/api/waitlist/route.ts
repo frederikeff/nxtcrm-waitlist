@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     
     // Send confirmation email
     await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'NxtCRM.ai <onboarding@resend.dev>',
+      from: process.env.RESEND_FROM_EMAIL || 'NxtCRM.ai <waitlist@mail.nxtcrm.ai>',
       to: email,
       subject: 'Confirm your NxtCRM.ai Waitlist Spot',
       html: `
