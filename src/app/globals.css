@@ -3,8 +3,13 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 18, 18, 18;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,7 +20,225 @@
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  @apply min-h-screen;
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Custom animations */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: var(--opacity-value, 0.3);
+  }
+  50% {
+    opacity: var(--opacity-value-mid, 0.6);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.animate-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 100%
+  );
+  transform: skewX(-25deg);
+  animation: shine 3s infinite;
+}
+
+/* Glass effects */
+.glass {
+  @apply bg-white/80 dark:bg-white/10 backdrop-blur-md backdrop-saturate-150 
+         border border-gray-200/50 dark:border-white/20 transition-colors duration-200;
+}
+
+.glass-dark {
+  @apply bg-white/90 dark:bg-black/40 backdrop-blur-md backdrop-saturate-150 
+         border border-gray-200/50 dark:border-white/10 transition-colors duration-200;
+}
+
+/* Seamless section spacing */
+.section {
+  @apply py-16 md:py-24;
+}
+
+.container {
+  @apply px-4 sm:px-6 lg:px-8 mx-auto;
+}
+
+/* Adaptive text and background colors */
+.text-adaptive {
+  @apply text-gray-800 dark:text-white;
+}
+
+.text-adaptive-secondary {
+  @apply text-gray-600 dark:text-white/80;
+}
+
+.bg-adaptive-primary {
+  @apply bg-white dark:bg-black;
+}
+
+.bg-adaptive-secondary {
+  @apply bg-gray-50 dark:bg-zinc-900;
+}
+
+.border-adaptive {
+  @apply border-gray-200 dark:border-white/10;
+}
+
+/* Button effects */
+.button-glow {
+  @apply transition-all duration-300;
+}
+
+.button-glow:hover {
+  @apply shadow-glow-purple transform -translate-y-0.5;
+  box-shadow: 0 0 20px rgba(192, 38, 211, 0.3);
+}
+
+.dark .button-glow:hover {
+  box-shadow: 0 0 30px rgba(192, 38, 211, 0.5);
+}
+
+.button-glow:active {
+  @apply transform scale-95;
+}
+
+/* Adaptive button styling */
+.button-adaptive {
+  @apply bg-black text-white dark:bg-white dark:text-black;
+}
+
+/* Adaptive hover backgrounds */
+.hover-bg-adaptive {
+  @apply hover:bg-gray-100 dark:hover:bg-white/10;
+}
+
+.form-input {
+  @apply px-4 py-3 
+         bg-gray-50 dark:bg-white/10 
+         border border-gray-200 dark:border-white/20 
+         rounded-md focus:outline-none focus:ring-2 focus:ring-times8-purple
+         text-gray-900 dark:text-white 
+         placeholder-gray-500 dark:placeholder-white/60
+         w-full transition-colors duration-200
+         hover:border-times8-purple/50;
+}
+
+.light .form-input {
+  @apply shadow-sm hover:shadow-md transition-shadow duration-200;
+}
+
+/* Base input styles */
+input[type="email"],
+input[type="text"],
+input[type="password"],
+textarea {
+  @apply px-4 py-3 
+         bg-gray-100 dark:bg-white/10 
+         border border-gray-200 dark:border-white/20 
+         rounded-md focus:outline-none focus:ring-2 focus:ring-times8-purple
+         text-gray-900 dark:text-white 
+         placeholder-gray-500 dark:placeholder-white/60
+         transition-all duration-200;
+}
+
+/* Light mode specific enhancements */
+.light input[type="email"],
+.light input[type="text"],
+.light input[type="password"],
+.light textarea {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+}
+
+/* Hover states */
+input[type="email"]:hover,
+input[type="text"]:hover,
+input[type="password"]:hover,
+textarea:hover {
+  @apply border-times8-purple/50;
+}
+
+/* Focus states */
+input[type="email"]:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+  @apply ring-2 ring-times8-purple ring-opacity-50 border-times8-purple;
+  background-color: white;
+}
+
+/* Override background color when focused in dark mode */
+.dark input[type="email"]:focus,
+.dark input[type="text"]:focus,
+.dark input[type="password"]:focus,
+.dark textarea:focus {
+  @apply bg-white/10;
+}
+
+/* Base select styling */
+select {
+  @apply px-4 py-3 
+         bg-gray-100 dark:bg-white/10 
+         border border-gray-200 dark:border-white/20 
+         rounded-md focus:outline-none focus:ring-2 focus:ring-times8-purple
+         text-gray-900 dark:text-white 
+         transition-all duration-200;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.5rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 2.5rem;
+}
+
+/* Option styling */
+select option {
+  @apply bg-gray-50 dark:bg-zinc-900 
+         text-gray-900 dark:text-white
+         py-2;
+}
+
+/* Hover state for options */
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+  @apply bg-times8-purple/10 text-times8-purple;
+}
+
+/* When the select is opened (focus state) */
+select:focus {
+  @apply ring-2 ring-times8-purple ring-opacity-50 border-times8-purple;
 }
