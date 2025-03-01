@@ -86,7 +86,7 @@ const ConfirmedContent = () => {
           
           <h1 className="text-2xl font-bold mb-2 text-adaptive">You&apos;re on the list!</h1>
           <p className="text-adaptive-secondary mb-6">
-            Your spot in the wait list is:
+            Your spot in the waitlist is:
           </p>
           
           <div className="text-4xl font-bold text-times8-purple mb-8">
