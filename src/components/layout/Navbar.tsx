@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import MobileMenu from '../components/layout/MobileMenu';
+import MobileMenu from './MobileMenu';
 
 export interface NavLink {
   name: string;
