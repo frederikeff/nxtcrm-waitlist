@@ -84,7 +84,7 @@ const ConfirmedContent = () => {
             </svg>
           </div>
           
-          <h1 className="text-2xl font-bold mb-2 text-adaptive">You're on the list!</h1>
+          <h1 className="text-2xl font-bold mb-2 text-adaptive">You&apos;re on the list!</h1>
           <p className="text-adaptive-secondary mb-6">
             Your spot in the wait list is:
           </p>

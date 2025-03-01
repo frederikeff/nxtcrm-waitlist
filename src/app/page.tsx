@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import GlowBlob from '@/components/decorations/GlowBlob';
 
