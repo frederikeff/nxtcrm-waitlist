@@ -2,7 +2,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Navbar from '@/app/Navbar';
+import Navbar from './Navbar'
 import Footer from '@/components/layout/Footer';
 import Background from '@/components/layout/Background';
 import './globals.css';
