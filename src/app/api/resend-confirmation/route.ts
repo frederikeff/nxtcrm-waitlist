@@ -1,4 +1,4 @@
-// src/app/api/waitlist/route.ts
+// src/app/api/resend-confirmation/route.ts
 import { NextResponse } from 'next/server';
 import Airtable from 'airtable';
 import { Resend } from 'resend';
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
     
-    // Check for existing email
+    // Find the record
     const existingRecords = await base('Waitlist Database')
       .select({
         filterByFormula: `{Email} = '${email}'`,
@@ -27,23 +27,24 @@ export async function POST(request: Request) {
       })
       .firstPage();
     
-    if (existingRecords.length > 0) {
-      const status = existingRecords[0].get('Status');
+    if (existingRecords.length === 0) {
       return NextResponse.json({
         success: false,
-        message: 'Email already registered',
-        status: status
+        error: 'Email not found'
+      }, { status: 404 });
+    }
+    
+    const record = existingRecords[0];
+    const status = record.get('Status');
+    
+    if (status === 'Confirmed') {
+      return NextResponse.json({
+        success: false,
+        message: 'Email already confirmed'
       });
     }
     
-    // Create new record with pending status
-    await base('Waitlist Database').create({
-      'Email': email,
-      'Status': 'Pending Confirmation',
-      'Join Date': new Date().toISOString().split('T')[0]
-    });
-    
-    // Generate confirmation token and URL
+    // Generate new confirmation token and URL
     const token = Buffer.from(`${email}:${Date.now()}`).toString('base64');
     const confirmUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/confirmed?token=${token}`;
     
@@ -64,11 +65,10 @@ export async function POST(request: Request) {
     
     return NextResponse.json({
       success: true,
-      message: 'Verification email sent',
-      redirect: '/waitlist'  // Updated to point to the new path
+      message: 'Confirmation email resent'
     });
   } catch (error) {
-    console.error('Waitlist signup error:', error);
+    console.error('Resend confirmation error:', error);
     return NextResponse.json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'

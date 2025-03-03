@@ -8,6 +8,7 @@ export default function HomePage() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState('');
+  const [showResendButton, setShowResendButton] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,6 +16,7 @@ export default function HomePage() {
     
     // Clear any previous error
     setFormError('');
+    setShowResendButton(false);
     setIsSubmitting(true);
     
     try {
@@ -27,17 +29,51 @@ export default function HomePage() {
       });
       
       const data = await response.json();
+      console.log('API Response:', data);
       
       if (response.ok && data.redirect) {
         window.location.href = data.redirect;
-      } else if (data.message === 'Email already registered') {
-        setFormError('This email is already registered for our waitlist.');
+      } else if (data.status === 'Pending Confirmation') {
+        setFormError('This email is registered but not yet confirmed. Please check your inbox for the confirmation email.');
+        setShowResendButton(true);
+      } else if (data.message === 'Email already registered' || data.status === 'confirmed') {
+        setFormError('This email is already registered and confirmed for our waitlist.');
       } else {
         setFormError('Something went wrong. Please try again.');
       }
     } catch (error) {
       console.error(error);
       setFormError('Failed to submit. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    if (!email) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/resend-confirmation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setFormError('Confirmation email has been resent. Please check your inbox.');
+        setShowResendButton(false);
+      } else {
+        setFormError('Failed to resend confirmation email. Please try again.');
+      }
+    } catch (error) {
+      console.error(error);
+      setFormError('An error occurred. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
@@ -100,8 +136,17 @@ export default function HomePage() {
             </form>
             {/* Form error message */}
             {formError && (
-              <div className="mt-2 text-red-500 text-sm text-center">
-                {formError}
+              <div className="mt-2 text-center">
+                <p className="text-red-500 text-sm">{formError}</p>
+                {showResendButton && (
+                  <button
+                    onClick={handleResendConfirmation}
+                    className="mt-2 text-times8-purple text-sm hover:underline focus:outline-none"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Sending...' : 'Resend confirmation email'}
+                  </button>
+                )}
               </div>
             )}
           </div>
