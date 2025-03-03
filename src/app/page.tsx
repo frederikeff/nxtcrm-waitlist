@@ -63,8 +63,6 @@ export default function HomePage() {
         body: JSON.stringify({ email }),
       });
       
-      const data = await response.json();
-      
       if (response.ok) {
         setFormError('Confirmation email has been resent. Please check your inbox.');
         setShowResendButton(false);
