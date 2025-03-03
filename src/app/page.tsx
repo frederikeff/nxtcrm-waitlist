@@ -7,11 +7,14 @@ import GlowBlob from '@/components/decorations/GlowBlob';
 export default function HomePage() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     
+    // Clear any previous error
+    setFormError('');
     setIsSubmitting(true);
     
     try {
@@ -27,9 +30,14 @@ export default function HomePage() {
       
       if (response.ok && data.redirect) {
         window.location.href = data.redirect;
+      } else if (data.message === 'Email already registered') {
+        setFormError('This email is already registered for our waitlist.');
+      } else {
+        setFormError('Something went wrong. Please try again.');
       }
     } catch (error) {
       console.error(error);
+      setFormError('Failed to submit. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -68,7 +76,7 @@ export default function HomePage() {
             </p>
           </div>
           
-          {/* Waitlist Signup */}
+          {/* Waitlist Signup - First Form */}
           <div id="signup-form" className="max-w-md mx-auto mt-12">
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
               <input
@@ -90,6 +98,12 @@ export default function HomePage() {
                 {isSubmitting ? 'Joining...' : 'Join Beta'}
               </AnimatedButton>
             </form>
+            {/* Form error message */}
+            {formError && (
+              <div className="mt-2 text-red-500 text-sm text-center">
+                {formError}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -180,7 +194,7 @@ export default function HomePage() {
               <p className="text-adaptive-secondary mb-6">
                 AI-driven chat interface lets you talk to your CRM like a human.
               </p>
-              <div className="aspect-video rounded-lg bg-white/5 dark:bg-black/50 border border-white/5 flex items-center justify-center overflow-hidden">
+              <div className="aspect-video rounded-lg bg-gray-900 dark:bg-black/50 border border-white/5 flex items-center justify-center overflow-hidden">
                 {/* Chat illustration with improved contrast */}
                 <div className="relative w-full h-full p-4">
                   <div className="absolute top-4 right-4 bg-times8-purple/90 text-white text-xs px-2 py-1 rounded-full">
@@ -243,6 +257,12 @@ export default function HomePage() {
                 {isSubmitting ? 'Joining...' : 'Join Beta'}
               </AnimatedButton>
             </form>
+            {/* Form error message - Second form */}
+            {formError && (
+              <div className="mt-2 text-red-500 text-sm text-center">
+                {formError}
+              </div>
+            )}
           </div>
         </div>
       </section>
